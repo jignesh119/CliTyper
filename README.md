@@ -12,6 +12,14 @@
 
 ## Installation
 
+### From-Registry
+
+```
+npm i -g clityper
+```
+
+OR
+
 1. Clone the repository:
 
    ```bash
