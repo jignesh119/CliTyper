@@ -7,6 +7,11 @@ import { main } from "./type.js";
 const helpText = `
 USAGE: ctype [FLAGS] [OPTIONS] [args]
 FLAGS:
+  --nobackspace \tdisable backspace key
+  --nohighlight \tdisable current & next word highlighting
+  --highlight1  \tonly highlight current word
+  --highlight2  \tonly highlight next word
+  --hard        \tdifficulty: hard (chooses complex words)
   -h, --help    \tshow this screen
   -V, --version \tversion info
 OPTIONS:
@@ -17,6 +22,9 @@ OPTIONS:
 EXAMPLES:
   $ ctype
   $ ctype -n 10
+  $ ctype -s block
+  $ ctype --hightlight2
+  $ ctype --hard
   $ ctype -w input.txt
   $ ctype -V
 `;
@@ -34,6 +42,31 @@ const flags = {
     choices: ["underline", "block"],
     shortFlag: "s",
     aliases: ["Style", "caret-style"],
+    isMultiple: false,
+  },
+  nobackspace: {
+    type: "boolean",
+    default: false,
+    isMultiple: false,
+  },
+  nohighlight: {
+    type: "boolean",
+    default: false,
+    isMultiple: false,
+  },
+  highlight1: {
+    type: "boolean",
+    default: false,
+    isMultiple: false,
+  },
+  highlight2: {
+    type: "boolean",
+    default: false,
+    isMultiple: false,
+  },
+  hard: {
+    type: "boolean",
+    default: false,
     isMultiple: false,
   },
   words: {

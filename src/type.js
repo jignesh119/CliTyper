@@ -1,8 +1,7 @@
-//TODO: menu screen, word modes, backspace feat; dokr image optimisation
 import blessed from "blessed";
-import { getWords, getWordIndices } from "./utils.js";
+import { getWords, getWordIndices, getAccuracy, getWpm } from "./utils.js";
 var screen = blessed.screen({ smartCSR: true });
-screen.title = "CliType";
+screen.title = "CliTyper";
 let boxOpts = {
   width: "50%",
   height: "50%",
@@ -22,13 +21,51 @@ let mainBody = blessed.box({
   align: "left",
   ...boxOpts,
 });
-//TODO: menu footer and screen
+let statsBody = blessed.box({
+  align: "center",
+  ...boxOpts,
+});
+let footerOpts = {
+  align: "center",
+  bottom: "0",
+  width: "50%",
+  height: "10%",
+  left: "center",
+  tags: true,
+  style: {
+    fg: "white",
+  },
+};
+let mainFooter = blessed.box({
+  ...footerOpts,
+  content: "{grey-fg}{bold}esc{/bold}-refresh {bold}C-c{/bold}-exit{/}",
+});
+let statsFooter = blessed.box({
+  ...footerOpts,
+  content: "{grey-fg}{bold}q{/bold}uit {bold}r{/bold}estart{/}",
+});
 class Session {
-  constructor(_nWords, _caretStyle, _body, _filePath) {
+  //TODO:
+  //dbfiles,configFiles
+  constructor(
+    _nWords,
+    _caretStyle,
+    _body,
+    _mainFooter,
+    _statsBody,
+    _statsFooter,
+    _highlightMode,
+    _hard,
+    _filePath,
+    _backspace,
+  ) {
     this.nWords = _nWords;
     this.caretStyle = _caretStyle;
     this.body = _body;
-    this.highlightMode = 1;
+    this.mainFooter = _mainFooter;
+    this.statsBody = _statsBody;
+    this.statsFooter = _statsFooter;
+    this.highlightMode = _highlightMode;
     this.currentIndex = 0;
     this.words = "";
     this.cwi = 0;
@@ -38,7 +75,9 @@ class Session {
     this.totalInp = 0;
     this.nMistakes = 0;
     this.xWordIndices = [];
+    this.hard = _hard;
     this.filePath = _filePath;
+    this.backspace = _backspace;
   }
   getBodyContent(inputChar) {
     let text = this.words
@@ -104,8 +143,7 @@ class Session {
         session.totalInp += 1;
         session.currentIndex++;
         if (session.currentIndex == session.body.getText().length)
-          //show menu
-          process.exit(0);
+          session.showStats();
         let inputChar = data;
         session.body.setContent(session.getBodyContent(inputChar));
         screen.render();
@@ -115,7 +153,15 @@ class Session {
       session.startSession();
     });
   }
-  //TODO: menu screen interractions
+  static handleStatsInput(_session) {
+    let session = _session;
+    session.statsBody.key(["escape", "q"], function (_, key) {
+      process.exit(0);
+    });
+    session.statsBody.key("r", function (_, key) {
+      session.startSession();
+    });
+  }
   startSession() {
     if (this.filePath) {
       this.words = getWords(null, null, this.filePath);
@@ -132,10 +178,23 @@ class Session {
     this.body.setContent(this.getBodyContent(null));
     screen.clearRegion(0, screen.width, 0, screen.heigth);
     screen.append(this.body);
+    screen.append(this.mainFooter);
     this.body.focus();
     screen.render();
   }
-  //show meny screen with stats
+  showStats() {
+    let [wpm, timeElapsed] = getWpm(this.startTime, this.nWords);
+    const acc = getAccuracy(this.totalInp, this.nMistakes);
+    const accuracy = acc.toFixed(2);
+    let adjustedWpm = Math.floor((wpm * acc) / 100);
+    const statsContent = `Adjusted WPM: ${adjustedWpm}\nAccuracy: ${accuracy}%\nRaw WPM:${Math.floor(wpm)}\nTime taken: ${(timeElapsed * 60).toFixed(2)}s\n${this.xWordIndices.length ? this.getMistakenWords() : ""}`;
+    screen.clearRegion(0, screen.width, 0, screen.heigth);
+    this.statsBody.setContent(`{center}${statsContent}{/}`);
+    screen.append(this.statsBody);
+    screen.append(this.statsFooter);
+    this.statsBody.focus();
+    screen.render();
+  }
   highlightable(ind) {
     //0-no highlight
     //1-default
@@ -175,8 +234,23 @@ export const main = (flags) => {
   const nWords = flags?.numWords || 30;
   let caretStyle = "underline";
   if (flags?.style === "block") caretStyle = "inverse";
-  let session = new Session(nWords, caretStyle, mainBody, flags?.filePath);
+  let highlightMode = 1;
+  if (flags?.nohighlight) highlightMode = 0;
+  else if (flags?.highlight1) highlightMode = 2;
+  else if (flags?.highlight2) highlightMode = 3;
+  let session = new Session(
+    nWords,
+    caretStyle,
+    mainBody,
+    mainFooter,
+    statsBody,
+    statsFooter,
+    highlightMode,
+    flags?.hard,
+    flags?.filePath,
+    !flags?.nobackspace,
+  );
   session.startSession();
   Session.handleUserInput(session);
-  //TODO: handle meny input
+  Session.handleStatsInput(session);
 };

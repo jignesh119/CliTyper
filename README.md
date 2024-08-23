@@ -16,6 +16,11 @@ npm start
 ```
 USAGE: ctype [FLAGS] [OPTIONS] [args]
 FLAGS:
+  --nobackspace \tdisable backspace key
+  --nohighlight \tdisable current & next word highlighting
+  --highlight1  \tonly highlight current word
+  --highlight2  \tonly highlight next word
+  --hard        \tdifficulty: hard (chooses complex words)
   -h, --help    \tshow this screen
   -V, --version \tversion info
 OPTIONS:
@@ -26,6 +31,9 @@ OPTIONS:
 EXAMPLES:
   $ ctype
   $ ctype -n 10
+  $ ctype -s block
+  $ ctype --hightlight2
+  $ ctype --hard
   $ ctype -w input.txt
   $ ctype -V
 ```
@@ -33,7 +41,11 @@ EXAMPLES:
 ### features
 
 - interractive typing interface
+- usefull stats screen
 - can select number of words in a session
 - can select the caret style
 - can select any file with words as content of test
 - hit Ctrl+c to exit test in middle
+- hit Esc to restart test, and many such keybindings
+- select highlight mode, caret style, hardness level of test
+- refer help docs for usage

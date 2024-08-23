@@ -20,8 +20,7 @@ export const getWords = (noOfWords = 30, isHard, filePath = null) => {
             __dirname,
             "..",
             "data",
-            //TODO: select file based on mode
-            `top1000.txt`,
+            `${isHard ? "hard.txt" : "top1000.txt"}`,
           ),
         ),
         "utf8",
