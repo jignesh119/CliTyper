@@ -5,6 +5,8 @@ import path from "path";
 import { main } from "./type.js";
 
 const helpText = `
+CliTyper - CLI based typing speed testing tool
+
 USAGE: ctype [FLAGS] [OPTIONS] [args]
 FLAGS:
   --nobackspace \tdisable backspace key

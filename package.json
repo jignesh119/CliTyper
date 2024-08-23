@@ -2,18 +2,36 @@
   "name": "clityper",
   "version": "1.0.0",
   "main": "index.js",
+  "description": "CLI based typing speed testing tool",
   "type": "module",
   "bin": {
     "ctype": "./src/cli.js"
   },
+  "files": [
+    "src/*",
+    "data/*"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/cli.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "cli",
+    "typing",
+    "speed",
+    "test",
+    "tool"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jignesh119/CliTyper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jignesh119/CliTyper/issues"
+  },
+  "homepage": "https://github.com/jignesh119/CliTyper/#readme",
+  "author": "jignesh119",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "blessed": "^0.1.81",
     "meow": "^13.2.0"
