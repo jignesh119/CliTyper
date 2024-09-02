@@ -2,6 +2,10 @@
 
 **CliTyper** is a CLI typing speed testing app built with Node.js. It allows users to test their typing speed and accuracy with customizable settings.
 
+## Demo
+
+![](https://github.com/jignesh119/CliTyper/blob/main/assets/demo.gif)
+
 ## Features
 
 - **Typing Test:** Test your typing speed and accuracy with customizable word lists.
